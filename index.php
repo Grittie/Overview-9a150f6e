@@ -6,66 +6,64 @@ $pass = '';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
+
 $options = [
     PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     PDO::ATTR_EMULATE_PREPARES   => false,
 ];
-
 try {
     $pdo = new PDO($dsn, $user, $pass, $options);
 } catch (\PDOException $e) {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
 
-$titles = $pdo->query('SELECT title FROM series');
-$rating = $pdo->query('SELECT rating FROM series');
+echo " <h1> Welcome to the $db control panel </h1>";
+
+$seriesData = 'SELECT * FROM series';
+
+$seriesQuery= $pdo->query($seriesData);
+$series = $seriesQuery->fetchAll(PDO::FETCH_ASSOC);
 
 echo "
-<h1>Netland film review</h1>
-<h2>Series</h2>
+<h2> Series </h2>
 <table>
     <tr>
-        <th>Title</th>
-        <th>Rating</th>
-    </tr>";
+        <td style=\"font-weight:bold\"> Title </td>
+        <td style=\"font-weight:bold\"> Rating </td>
+    </tr>
+";
 
-foreach ($titles as $row) {
-    echo "<tr>";
-    echo "<td>" . $row['title'] . "</td>";
-
-    foreach ($rating as $rowa) {
-        echo "<td>" . $rowa['rating'] . "</td>";
-        break;
-    }
-    echo "</tr>";
-}
-echo "</table>";
-
-$titles = $pdo->query('SELECT title FROM movies');
-$duur = $pdo->query('SELECT duur FROM movies');
-
-echo "
-<h2>Movies</h2>
-<table>
+foreach ($series as $row) {
+    echo "
     <tr>
-        <th>Titel</th>
-        <th>Duration</th>
-    </tr>";
-
-foreach ($titles as $row) {
-    echo "<tr>";
-    echo "<td>" . $row['title'] . "</td>";
-    foreach ($duur as $rowa) {
-        echo "<td>" . $rowa['duur'] . "</td>";
-        break;
-    }
-    echo "</tr>";
+        <td>$row[title]</td>
+        <td>$row[rating]</td>
+    </tr> ";
 }
 
 echo "</table>";
-?>
 
-</body>
+$moviesData = 'SELECT * FROM movies';
 
-</html>
+$moviesQuery= $pdo->query($moviesData);
+$movies = $moviesQuery->fetchAll(PDO::FETCH_ASSOC);
+
+echo "
+<h2> Series </h2>
+<table>
+    <tr>
+        <td style=\"font-weight:bold\"> Title </td>
+        <td style=\"font-weight:bold\"> Duration </td>
+    </tr>
+";
+
+foreach ($movies as $row) {
+    echo "
+    <tr>
+        <td>$row[title]</td>
+        <td>$row[duur]</td>
+    </tr> ";
+}
+
+echo "</table>";
